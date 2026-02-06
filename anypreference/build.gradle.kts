@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+    id("maven-publish")
 }
 
 android {
@@ -33,4 +34,25 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.mmkv)
+}
+
+fun latestGitTag(): String {
+    val process = ProcessBuilder("git", "describe", "--tags", "--abbrev=0").start()
+    return process.inputStream.bufferedReader().use { bufferedReader ->
+        bufferedReader.readText().trim()
+    }
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.github.wraphex"
+            artifactId = "any-preference"
+            version = latestGitTag().ifEmpty { "SNAPSHOT" }
+
+            afterEvaluate {
+                from(components.findByName("release"))
+            }
+        }
+    }
 }
