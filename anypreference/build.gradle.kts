@@ -26,6 +26,27 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    publishing {
+        singleVariant("release")
+    }
+}
+
+val pubGroup = project.findProperty("group")?.toString() ?: "com.github.wraphex"
+val pubVersion = project.findProperty("version")?.toString() ?: "SNAPSHOT"
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = pubGroup
+            artifactId = "any-preference"
+            version = pubVersion
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }
 
 dependencies {
@@ -34,25 +55,4 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.mmkv)
-}
-
-fun latestGitTag(): String {
-    val process = ProcessBuilder("git", "describe", "--tags", "--abbrev=0").start()
-    return process.inputStream.bufferedReader().use { bufferedReader ->
-        bufferedReader.readText().trim()
-    }
-}
-
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "com.github.wraphex"
-            artifactId = "any-preference"
-            version = latestGitTag().ifEmpty { "SNAPSHOT" }
-
-            afterEvaluate {
-                from(components.findByName("release"))
-            }
-        }
-    }
 }
