@@ -19,7 +19,9 @@ abstract class AnyPreferenceDelegate<T>(
     private val defaultValue: T?,
     private val type: KType,
 ) {
-    private val gson by lazy { Gson() }
+    companion object {
+        private val gson by lazy { Gson() }
+    }
     abstract val sharedPreferences: SharedPreferences
 
     @OptIn(ExperimentalStdlibApi::class)
