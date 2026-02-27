@@ -96,6 +96,5 @@ class MainActivity : AppCompatActivity() {
 
 ## 注意
 
-- MMKV 为可选后端，未初始化时使用会抛出 `RuntimeException`
 - 默认键名使用属性名，可通过 `key` 参数覆盖
 - 默认 SharedPreferences 文件名为 `{packageName}_preferences`
