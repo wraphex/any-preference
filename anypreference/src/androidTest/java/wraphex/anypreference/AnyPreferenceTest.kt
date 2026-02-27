@@ -65,4 +65,30 @@ class AnyPreferenceTest {
         userPref = user
         Log.d("testCustomType", "userPref: $user $userPref")
     }
+
+    @Test
+    fun performanceSp() {
+        performanceTest {
+            pairPref = Pair("1", "2")
+            pairPref = Pair("3", "4")
+        }
+    }
+
+    @Test
+    fun performanceMmkv() {
+        MMKV.initialize(context)
+        performanceTest {
+            mmkvPref = Pair("1", "2")
+            mmkvPref = Pair("3", "4")
+        }
+    }
+
+    fun performanceTest(test: () -> Unit) {
+        val start = System.currentTimeMillis()
+        for (i in 0..100000) {
+            test()
+        }
+        val end = System.currentTimeMillis()
+        Log.d("performanceTest", "time: ${end - start}")
+    }
 }

@@ -1,6 +1,7 @@
 package wraphex.anypreference
 
 import android.content.SharedPreferences
+import java.lang.reflect.Method
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -20,16 +21,12 @@ class AnyPreferenceMmkvImpl<T>(
 ) : AnyPreferenceDelegate<T>(key, defaultValue, type) {
     override val sharedPreferences: SharedPreferences by lazy {
         try {
-            val mmkvClass = Class.forName("com.tencent.mmkv.MMKV")
+            val mmkvClass = MmkvReflectionCache.mmkvClass
             if (id == null) {
-                mmkvClass.getMethod("defaultMMKV")
-                    .invoke(mmkvClass)
+                MmkvReflectionCache.defaultMMKVMethod.invoke(mmkvClass)
             } else {
-                mmkvClass.getMethod("mmkvWithID", String::class.java)
-                    .invoke(mmkvClass, id)
+                MmkvReflectionCache.mmkvWithIDMethod.invoke(mmkvClass, id)
             } as SharedPreferences
-        } catch (e: ClassNotFoundException) {
-            throw RuntimeException("MMKV not found", e)
         } catch (e: IllegalStateException) {
             throw RuntimeException("MMKV may not initialized", e)
         }
@@ -64,4 +61,22 @@ inline fun <reified T : Any?> preferenceMmkv(
     defaultValue: T
 ): AnyPreferenceDelegate<T> {
     return preferenceMmkv(null, defaultValue)
+}
+
+private object MmkvReflectionCache {
+    val mmkvClass: Class<*> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        try {
+            Class.forName("com.tencent.mmkv.MMKV")
+        } catch (e: ClassNotFoundException) {
+            throw RuntimeException("MMKV not found", e)
+        }
+    }
+
+    val defaultMMKVMethod: Method by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        mmkvClass.getMethod("defaultMMKV")
+    }
+
+    val mmkvWithIDMethod: Method by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        mmkvClass.getMethod("mmkvWithID", String::class.java)
+    }
 }
