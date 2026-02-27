@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.google.gson.** { *; }
+
+-keep class wraphex.anypreference.AnyPreferenceDelegate { *; }
+-keep class wraphex.anypreference.AnyPreferenceSpImplKt { *; }
+-keep class wraphex.anypreference.AnyPreferenceMmkvImplKt { *; }
