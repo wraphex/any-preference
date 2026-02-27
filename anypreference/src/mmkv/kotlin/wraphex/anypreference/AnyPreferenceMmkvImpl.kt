@@ -32,7 +32,7 @@ class AnyPreferenceMmkvImpl<T>(
 /**
  * @see [AnyPreferenceMmkvImpl]
  */
-inline fun <reified T : Any?> preferenceMmkv(
+inline fun <reified T> preference(
     id: String? = null,
     key: String? = null,
     defaultValue: T
@@ -43,18 +43,18 @@ inline fun <reified T : Any?> preferenceMmkv(
 /**
  * @see [AnyPreferenceMmkvImpl]
  */
-inline fun <reified T : Any?> preferenceMmkv(
+inline fun <reified T> preference(
     key: String? = null,
     defaultValue: T
 ): AnyPreferenceDelegate<T> {
-    return preferenceMmkv(null, key, defaultValue)
+    return preference(null, key, defaultValue)
 }
 
 /**
  * @see [AnyPreferenceMmkvImpl]
  */
-inline fun <reified T : Any?> preferenceMmkv(
+inline fun <reified T> preference(
     defaultValue: T
 ): AnyPreferenceDelegate<T> {
-    return preferenceMmkv(null, defaultValue)
+    return preference(null, defaultValue)
 }

@@ -16,7 +16,7 @@ class MmkvTest : AnyPreferenceTest() {
         MMKV.initialize(context)
     }
 
-    var mmkvPref by preferenceMmkv(null as Pair<String, String>?)
+    var mmkvPref by preference(null as Pair<String, String>?)
 
     @Test
     fun testMmkv() {
