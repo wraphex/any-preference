@@ -14,8 +14,7 @@ A lightweight Android key-value storage library that leverages Kotlin property d
 - **Type Safe**: Captures type information at compile time using Kotlin reified generics and `KType`.
 - **Property Delegation**: Achieves a clean read/write API using the `by` keyword.
 - **Complex Type Support**: Non-primitive types are automatically serialized to JSON via Gson.
-- **Multi-Backend**: Offers optional SharedPreferences and MMKV implementations.
-- **Optional MMKV**: Dynamically loaded via reflection, not a hard dependency.
+- **Multi-Backend**: Offers optional SharedPreferences or MMKV implementations.
 
 ## Integration
 
@@ -29,12 +28,13 @@ A lightweight Android key-value storage library that leverages Kotlin property d
     }
     ```
 
-2.  Add the dependency in your module's `build.gradle.kts`:
+2.  Add the dependency in your module's `build.gradle.kts`(choose one):
     ```kotlin
     dependencies {
-        implementation("com.github.wraphex:any-preference:main-SNAPSHOT")
-        // Include if you plan to use the MMKV backend
-        implementation("com.tencent:mmkv:2.3.0")
+        // SharedPreferences
+        implementation("com.github.wraphex.any-preference:any-preference-sp:main-SNAPSHOT")
+        // or MMKV
+        implementation("com.github.wraphex.any-preference:any-preference-mmkv:main-SNAPSHOT")    
     }
     ```
 
@@ -76,12 +76,12 @@ class MainActivity : AppCompatActivity() {
     }
     ```
 
-2. Declare properties using `preferenceMmkv`. The usage is largely identical to the SharedPreferences backend:
+2. Declare properties using `preference`. The usage is largely identical to the SharedPreferences backend:
     ```kotlin
     class SettingsViewModel {
-        private var cache by preferenceMmkv(CacheData(emptyList()))
-        private var darkMode by preferenceMmkv(key = "dark_mode", defaultValue = false)
-
+        private var cache by preference(CacheData(emptyList()))
+        private var darkMode by preference(key = "dark_mode", defaultValue = false)
+        
         fun update(data: CacheData) { cache = data }
     }
     ```
@@ -90,11 +90,10 @@ class MainActivity : AppCompatActivity() {
 
 - `AnyPreferenceDelegate<T>`: Abstract base class implementing the `getValue` / `setValue` logic.
 - `AnyPreferenceSpImpl<T>`: SharedPreferences implementation.
-- `AnyPreferenceMmkvImpl<T>`: MMKV implementation, loading MMKV instance via reflection.
-- Inline functions `preference` and `preferenceMmkv` provide convenient construction methods.
+- `AnyPreferenceMmkvImpl<T>`: MMKV implementation.
+- Inline functions `preference` provide convenient construction methods.
 
 ## Notes
 
-- MMKV is an optional backend. Using it without initialization will throw a `RuntimeException`.
 - Default keys use the property name, which can be overridden via the `key` parameter.
 - Default SharedPreferences filename is `{packageName}_preferences`.

@@ -15,8 +15,7 @@ SharedPreferences 与 MMKV 两种后端，自动处理类型与序列化。
 - **类型安全**：通过 Kotlin reified 泛型与 `KType` 在编译时捕获类型信息
 - **属性委托**：使用 `by` 关键字实现简洁的读写 API
 - **复杂类型支持**：非基本类型通过 Gson 自动 JSON 序列化
-- **多后端**：可选 SharedPreferences 与 MMKV 实现
-- **可选 MMKV**：通过反射动态加载，非硬依赖
+- **多后端**：可选 SharedPreferences 或 MMKV 实现
 
 ## 集成
 
@@ -30,13 +29,14 @@ SharedPreferences 与 MMKV 两种后端，自动处理类型与序列化。
     }
     ```
 
-2. 在模块的 build.gradle.kts 中添加依赖：
+2. 在模块的 build.gradle.kts 中添加依赖（选择其中一个）：
     ```kts
     dependencies {
-        implementation("com.github.wraphex:any-preference:main-SNAPSHOT")
-        // 如需 MMKV 后端，自行添加
-        implementation("com.tencent:mmkv:2.3.0")
-    }
+        // SharedPreferences
+        implementation("com.github.wraphex.any-preference:any-preference-sp:main-SNAPSHOT")
+        // or MMKV
+        implementation("com.github.wraphex.any-preference:any-preference-mmkv:main-SNAPSHOT")    
+   }
     ```
 
 ## 快速开始
@@ -77,11 +77,11 @@ class MainActivity : AppCompatActivity() {
     }
     ```
 
-2. 使用 `preferenceMmkv` 声明属性，用法与 SharPreferences 后端基本相同：
+2. 使用 `preference` 声明属性，用法与 SharPreferences 后端基本相同：
     ```kotlin
     class SettingsViewModel {
-        private var cache by preferenceMmkv(CacheData(emptyList()))
-        private var darkMode by preferenceMmkv(key = "dark_mode", defaultValue = false)
+        private var cache by preference(CacheData(emptyList()))
+        private var darkMode by preference(key = "dark_mode", defaultValue = false)
         
         fun update(data: CacheData) { cache = data }
     }
@@ -91,8 +91,8 @@ class MainActivity : AppCompatActivity() {
 
 - `AnyPreferenceDelegate<T>`：抽象基类，实现 `getValue/setValue` 读写逻辑
 - `AnyPreferenceSpImpl<T>`：SharedPreferences 实现
-- `AnyPreferenceMmkvImpl<T>`：MMKV 实现，通过反射加载 MMKV 实例
-- 内联函数 `preference` 与 `preferenceMmkv` 提供便捷的构造方式
+- `AnyPreferenceMmkvImpl<T>`：MMKV 实现
+- 内联函数 `preference` 提供便捷的构造方式
 
 ## 注意
 
