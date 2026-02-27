@@ -66,6 +66,7 @@ afterEvaluate {
 
 dependencies {
     implementation(libs.gson)
+    "mmkvImplementation"(libs.mmkv)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
