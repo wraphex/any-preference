@@ -22,28 +22,43 @@ android {
         }
     }
 
+    flavorDimensions += "backend"
+    productFlavors {
+        create("sp") {
+            dimension = "backend"
+        }
+        create("mmkv") {
+            dimension = "backend"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 
     publishing {
-        singleVariant("release")
+        singleVariant("spRelease")
+        singleVariant("mmkvRelease")
     }
 }
 
-val pubGroup = project.findProperty("group")?.toString() ?: "com.github.wraphex"
-val pubVersion = project.findProperty("version")?.toString() ?: "SNAPSHOT"
-
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = pubGroup
-            artifactId = "any-preference"
-            version = pubVersion
-
-            afterEvaluate {
-                from(components["release"])
+afterEvaluate {
+    publishing {
+        val pubGroup = project.findProperty("group")?.toString() ?: "com.github.wraphex"
+        val pubVersion = project.findProperty("version")?.toString() ?: "SNAPSHOT"
+        publications {
+            register<MavenPublication>("spRelease") {
+                groupId = pubGroup
+                artifactId = "any-preference-sp"
+                version = pubVersion
+                from(components["spRelease"])
+            }
+            register<MavenPublication>("mmkvRelease") {
+                groupId = pubGroup
+                artifactId = "any-preference-mmkv"
+                version = pubVersion
+                from(components["mmkvRelease"])
             }
         }
     }

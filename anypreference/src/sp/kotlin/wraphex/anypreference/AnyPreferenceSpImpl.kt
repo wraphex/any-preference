@@ -26,11 +26,10 @@ class AnyPreferenceSpImpl<T>(
     }
 }
 
-
 /**
  * @see [AnyPreferenceSpImpl]
  */
-inline fun <reified T : Any?> preference(
+inline fun <reified T> preference(
     context: Context,
     name: String? = null,
     key: String? = null,
@@ -42,7 +41,7 @@ inline fun <reified T : Any?> preference(
 /**
  * @see [AnyPreferenceSpImpl]
  */
-inline fun <reified T : Any?> preference(
+inline fun <reified T> preference(
     context: Context,
     key: String? = null,
     defaultValue: T
@@ -53,7 +52,7 @@ inline fun <reified T : Any?> preference(
 /**
  * @see [AnyPreferenceSpImpl]
  */
-inline fun <reified T : Any?> preference(
+inline fun <reified T> preference(
     context: Context,
     defaultValue: T
 ): AnyPreferenceDelegate<T> {
