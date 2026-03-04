@@ -15,14 +15,13 @@ import kotlin.reflect.typeOf
  * @param type The type of the value being stored, get from defaultValue.
  */
 class AnyPreferenceSpImpl<T>(
-    context: Context,
-    name: String? = context.packageName + "_preferences",
+    name: String? = AnyPreferences.context.packageName + "_preferences",
     key: String?,
     defaultValue: T?,
     type: KType
 ) : AnyPreferenceDelegate<T>(key, defaultValue, type) {
     override val sharedPreferences: SharedPreferences by lazy {
-        context.getSharedPreferences(name, Context.MODE_PRIVATE)
+        AnyPreferences.context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
 }
 
@@ -30,31 +29,28 @@ class AnyPreferenceSpImpl<T>(
  * @see [AnyPreferenceSpImpl]
  */
 inline fun <reified T> preference(
-    context: Context,
     name: String? = null,
     key: String? = null,
     defaultValue: T
 ): AnyPreferenceDelegate<T> {
-    return AnyPreferenceSpImpl(context, name, key, defaultValue, typeOf<T>())
+    return AnyPreferenceSpImpl(name, key, defaultValue, typeOf<T>())
 }
 
 /**
  * @see [AnyPreferenceSpImpl]
  */
 inline fun <reified T> preference(
-    context: Context,
     key: String? = null,
     defaultValue: T
 ): AnyPreferenceDelegate<T> {
-    return preference(context, null, key, defaultValue)
+    return preference(null, key, defaultValue)
 }
 
 /**
  * @see [AnyPreferenceSpImpl]
  */
 inline fun <reified T> preference(
-    context: Context,
     defaultValue: T
 ): AnyPreferenceDelegate<T> {
-    return preference(context, null, defaultValue)
+    return preference(null, defaultValue)
 }

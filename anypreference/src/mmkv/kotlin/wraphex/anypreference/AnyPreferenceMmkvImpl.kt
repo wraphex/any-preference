@@ -20,12 +20,8 @@ class AnyPreferenceMmkvImpl<T>(
     type: KType
 ) : AnyPreferenceDelegate<T>(key, defaultValue, type) {
     override val sharedPreferences: SharedPreferences by lazy {
-        try {
-            if (id == null) MMKV.defaultMMKV()
-            else MMKV.mmkvWithID(id)
-        } catch (e: IllegalStateException) {
-            throw RuntimeException("MMKV may not initialized", e)
-        }
+        if (id == null) MMKV.defaultMMKV()
+        else MMKV.mmkvWithID(id)
     }
 }
 
