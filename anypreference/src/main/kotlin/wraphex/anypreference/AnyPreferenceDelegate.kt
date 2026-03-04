@@ -30,7 +30,7 @@ abstract class AnyPreferenceDelegate<T>(
         val actualKey = key ?: property.name
         val value = sharedPreferences.run {
             when (type.classifier) {
-                String::class -> getString(actualKey, defaultValue as String)
+                String::class -> getString(actualKey, defaultValue as String?)
                 Int::class -> getInt(actualKey, defaultValue as Int)
                 Boolean::class -> getBoolean(actualKey, defaultValue as Boolean)
                 Float::class -> getFloat(actualKey, defaultValue as Float)
