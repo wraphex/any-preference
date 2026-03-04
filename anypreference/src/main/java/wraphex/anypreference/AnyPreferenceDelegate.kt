@@ -45,10 +45,11 @@ abstract class AnyPreferenceDelegate<T>(
         return value as T
     }
 
-    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
         val actualKey = key ?: property.name
         sharedPreferences.edit().run {
             when (value) {
+                null -> remove(actualKey)
                 is String -> putString(actualKey, value)
                 is Int -> putInt(actualKey, value)
                 is Boolean -> putBoolean(actualKey, value)

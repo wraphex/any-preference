@@ -30,11 +30,13 @@ class SpTest : AnyPreferenceTest() {
     @Test
     fun testSharedPreferences() {
         val pair = Pair("first", "second")
-        // Save it as if assigning a value to a variable
+        // set: Save it as if assigning a value to a variable
         pairPref = pair
-        // Read it just like retrieving a variable value
+        // get: Read it just like retrieving a variable value
         Log.d("testSharedPreferences", "pairPref: $pair $pairPref")
         assertEquals(pair, pairPref)
+        // remove: Remove the value
+        pairPref = null
     }
 
     @Test

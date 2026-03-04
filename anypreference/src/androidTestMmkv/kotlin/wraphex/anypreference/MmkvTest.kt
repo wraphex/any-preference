@@ -21,9 +21,13 @@ class MmkvTest : AnyPreferenceTest() {
     @Test
     fun testMmkv() {
         val pair = Pair("first", "second")
+        // set
         mmkvPref = pair
+        // get
         Log.d("testMmkv", "mmkvPref: $pair $mmkvPref")
         assertEquals(pair, mmkvPref)
+        // remove
+        mmkvPref = null
     }
 
     @Test
