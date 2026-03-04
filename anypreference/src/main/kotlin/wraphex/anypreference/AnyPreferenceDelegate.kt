@@ -26,7 +26,7 @@ abstract class AnyPreferenceDelegate<T>(
 
     @OptIn(ExperimentalStdlibApi::class)
     @Suppress("UNCHECKED_CAST")
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T? {
         val actualKey = key ?: property.name
         val value = sharedPreferences.run {
             when (type.classifier) {
