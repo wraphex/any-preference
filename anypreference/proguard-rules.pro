@@ -23,5 +23,4 @@
 -keep class com.google.gson.** { *; }
 
 -keep class wraphex.anypreference.AnyPreferenceDelegate { *; }
--keep class wraphex.anypreference.AnyPreferenceSpImplKt { *; }
--keep class wraphex.anypreference.AnyPreferenceMmkvImplKt { *; }
+-keep class wraphex.anypreference.AnyPreferenceFactoryKt { *; }
