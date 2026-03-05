@@ -28,7 +28,7 @@ A lightweight Android key-value storage library that leverages Kotlin property d
     }
     ```
 
-2.  Add the dependency in your module's `build.gradle.kts`(choose one):
+2.  Add the dependency in your module's `build.gradle.kts`(choose one, latest version [![](https://www.jitpack.io/v/wraphex/any-preference.svg)](https://www.jitpack.io/#wraphex/any-preference) ):
     ```kotlin
     dependencies {
         // SharedPreferences
@@ -40,60 +40,70 @@ A lightweight Android key-value storage library that leverages Kotlin property d
 
 ## Quick Start
 
-### SharedPreferences Backend
-
-```kotlin
-class MainActivity : AppCompatActivity() {
-    // Basic type
-    private var userAge by preference(this, 0)
-    // Custom object
-    private var userData by preference(this, User(1, "Default", 111))
-    // Nullable typed value
-    private var userData2 by preference(this, null as User?)
-    // Custom key name
-    private var darkMode by preference(this, "dark_mode", false)
-
-    fun demo() {
-        userAge = 30
-        userData = User(1, "Alice", 666)
-        userData2 = User(2, "Bob", 666)
-
-        Log.d("Pref", "User: ${userData.name}, Age: $userAge")
-        Log.d("Pref", "Data: $userData")
-    }
-}
-```
-
-### MMKV Backend
-
-1. Initialize MMKV in your `Application.onCreate()`:
+1. Initialize in `Application.onCreate()`:
     ```kotlin
     class MyApplication : Application() {
         override fun onCreate() {
             super.onCreate()
-            MMKV.initialize(this)
+            AnyPreference.initialize(this)
         }
     }
     ```
 
-2. Declare properties using `preference`. The usage is largely identical to the SharedPreferences backend:
+2. Declare properties using `preference`:
     ```kotlin
-    class SettingsViewModel {
-        private var cache by preference(CacheData(emptyList()))
-        private var darkMode by preference(key = "dark_mode", defaultValue = false)
-        
-        fun update(data: CacheData) { cache = data }
+    val user1 = User(1, "Alice")
+    val user2 = User(2, "Bob")
+
+    // Basic type
+    var age by preference(defaultValue = 0)
+
+    // Custom object
+    var userPref by preference(defaultValue = user1)
+
+    // Nullable with type
+    var userNullable by preference(defaultValue = null as User?)
+
+    // Custom key name
+    var darkMode by preference(key = "dark_mode", defaultValue = false)
+
+    fun usage() {
+        val user = User(3, "Carol")
+        // set: save like variable assignment
+        userPref = user
+        // get: read like getting variable value
+        Log.d(TAG, "preference: $user $userPref")
+        assertEquals(user, userPref)
+        // remove: assign null to delete key-value
+        userPref = null
     }
     ```
 
 ## Architecture
 
-- `AnyPreferenceDelegate<T>`: Abstract base class implementing the `getValue` / `setValue` logic.
-- `AnyPreferenceSpImpl<T>`: SharedPreferences implementation.
-- `AnyPreferenceMmkvImpl<T>`: MMKV implementation.
-- Inline functions `preference` provide convenient construction methods.
+- **Core Layer** (`main` source set)
+  - [`AnyPreferenceDelegate<T>`](anypreference/src/main/kotlin/wraphex/anypreference/AnyPreferenceDelegate.kt): Abstract base class implementing `getValue/setValue` read/write logic, handling primitive type storage and Gson JSON serialization
+  - [`BaseAnyPreferences`](anypreference/src/main/kotlin/wraphex/anypreference/BaseAnyPreferences.kt): Base class managing Context lifecycle and initialization
+  - [`AnyPreferenceFactory`](anypreference/src/main/kotlin/wraphex/anypreference/AnyPreferenceFactory.kt): Provides inline function `preference` to create delegate instances
+
+- **SharedPreferences Implementation** (`sp` source set)
+  - [`AnyPreferenceDelegateImpl<T>`](anypreference/src/sp/kotlin/wraphex/anypreference/AnyPreferenceDelegateImpl.kt): Inherits from `AnyPreferenceDelegate`, uses `SharedPreferences` as storage backend
+  - [`AnyPreferences`](anypreference/src/sp/kotlin/wraphex/anypreference/AnyPreferences.kt): Inherits from `BaseAnyPreferences`, singleton object managing global Context
+
+- **MMKV Implementation** (`mmkv` source set)
+  - [`AnyPreferenceDelegateImpl<T>`](anypreference/src/mmkv/kotlin/wraphex/anypreference/AnyPreferenceDelegateImpl.kt): Inherits from `AnyPreferenceDelegate`, uses `MMKV` as storage backend
+  - [`AnyPreferences`](anypreference/src/mmkv/kotlin/wraphex/anypreference/AnyPreferences.kt): Inherits from `BaseAnyPreferences`, initializes MMKV and manages global Context
+
+- **Data Flow**:
+  ```
+  User Property Declaration → preference() → AnyPreferenceDelegateImpl 
+                          → AnyPreferenceDelegate.getValue/setValue 
+                          → SharedPreferences/MMKV
+  ```
 
 ## Notes
 
-- Default keys use the property name, which can be overridden via the `key` parameter.
-- Default SharedPreferences filename is `{packageName}_preferences`.
+- **Key Name Rules**: Default uses property name as key name, can be customized via `key` parameter
+- **Storage Filename**:
+  - SharedPreferences: Default filename is `{packageName}_preferences`, can be specified via `name` parameter
+  - MMKV: Default uses `defaultMMKV()`, can specify different MMKV ID via `name` parameter
